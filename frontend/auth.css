@@ -1,0 +1,92 @@
+.auth-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.auth-card {
+    width: min(380px, 100%);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 32px;
+}
+
+.auth-logo {
+    font-family: "Playfair Display", serif;
+    font-weight: 700;
+    font-size: 20px;
+    margin-bottom: 4px;
+    text-align: center;
+}
+
+.auth-subtitle {
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 24px;
+}
+
+.auth-field {
+    margin-bottom: 14px;
+}
+
+.auth-field label {
+    display: block;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 6px;
+}
+
+.auth-field input {
+    width: 100%;
+    padding: 11px 14px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    color: var(--ink);
+    font-family: "DM Sans", sans-serif;
+    font-size: 14px;
+}
+
+.auth-field input:focus {
+    outline: 0;
+    border-color: var(--mint);
+}
+
+.auth-submit {
+    width: 100%;
+    padding: 12px;
+    background: var(--green);
+    color: white;
+    border: 0;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: 6px;
+}
+
+.auth-submit:hover { background: var(--green2); }
+.auth-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.auth-error {
+    background: var(--status-red-bg);
+    color: var(--status-red-fg);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 12px;
+    margin-bottom: 14px;
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: 18px;
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.auth-footer a { color: var(--mint); text-decoration: none; }
+.auth-footer a:hover { text-decoration: underline; }

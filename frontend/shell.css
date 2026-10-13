@@ -1,0 +1,213 @@
+/* Shared app shell: left sidebar nav + theme toggle, layered onto each
+   page's existing header/content rather than replacing it (keeps each
+   page's own layout intact, e.g. chat.html's full-height flex panes). */
+
+.shell-body {
+    display: flex;
+    min-height: 100vh;
+}
+
+.shell-body > .shell-page {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.shell-sidebar {
+    width: 208px;
+    flex-shrink: 0;
+    background: var(--surface);
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-4) var(--space-3);
+    transition: transform 0.2s;
+}
+
+.shell-logo {
+    font-family: "Playfair Display", serif;
+    font-weight: 700;
+    font-size: 17px;
+    padding: 0 var(--space-2) var(--space-5);
+    color: var(--ink);
+}
+
+.shell-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.shell-nav a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 10px;
+    border-radius: var(--radius-sm);
+    color: var(--muted);
+    text-decoration: none;
+    font-size: var(--text-sm);
+    font-weight: 600;
+}
+
+.shell-nav a:hover {
+    background: var(--hover);
+    color: var(--ink);
+}
+
+.shell-nav a.active {
+    background: var(--status-green-bg);
+    color: var(--status-green-fg);
+}
+
+.shell-sidebar-footer {
+    margin-top: auto;
+    padding: var(--space-2);
+    font-size: var(--text-xs);
+    color: var(--muted);
+}
+
+.account-email {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-bottom: 6px;
+    color: var(--ink);
+    font-weight: 600;
+}
+
+.logout-btn {
+    width: 100%;
+    padding: 6px 10px;
+    background: none;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-xs);
+    cursor: pointer;
+}
+
+.logout-btn:hover {
+    color: var(--danger);
+    border-color: var(--danger);
+}
+
+/* ---------- Toast notifications ---------- */
+
+.toast-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: min(360px, calc(100vw - 40px));
+}
+
+.toast {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--muted);
+    border-radius: var(--radius-md);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+    font-size: var(--text-sm);
+    color: var(--ink);
+    animation: toast-in 0.18s ease-out;
+}
+
+.toast-leaving { opacity: 0; transform: translateX(8px); transition: 0.2s; }
+
+@keyframes toast-in {
+    from { opacity: 0; transform: translateX(8px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.toast-success { border-left-color: var(--status-green-fg); }
+.toast-error { border-left-color: var(--status-red-fg); }
+.toast-warning { border-left-color: var(--status-yellow-fg); }
+.toast-info { border-left-color: var(--status-blue-fg); }
+
+.toast-icon { font-weight: 700; flex-shrink: 0; }
+.toast-success .toast-icon { color: var(--status-green-fg); }
+.toast-error .toast-icon { color: var(--status-red-fg); }
+.toast-warning .toast-icon { color: var(--status-yellow-fg); }
+.toast-info .toast-icon { color: var(--status-blue-fg); }
+
+.toast-message { flex: 1; line-height: 1.4; }
+
+.toast-close {
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 11px;
+    padding: 0;
+    flex-shrink: 0;
+}
+
+.toast-close:hover { color: var(--ink); }
+
+@media (max-width: 500px) {
+    .toast-container { left: 12px; right: 12px; bottom: 12px; max-width: none; }
+}
+
+.shell-topbar-extra {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.theme-toggle-btn {
+    background: none;
+    border: 1px solid var(--line);
+    color: var(--ink);
+    border-radius: var(--radius-sm);
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.theme-toggle-btn:hover {
+    border-color: var(--mint);
+}
+
+.workspace-placeholder {
+    padding: 6px 12px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-xs);
+    color: var(--muted);
+    white-space: nowrap;
+}
+
+.sidebar-mobile-toggle {
+    display: none;
+}
+
+@media (max-width: 900px) {
+
+    .shell-sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        z-index: 60;
+        transform: translateX(-100%);
+        box-shadow: 0 0 0 2000px var(--overlay);
+    }
+
+    .shell-sidebar.open {
+        transform: translateX(0);
+    }
+
+    .sidebar-mobile-toggle {
+        display: inline-flex;
+    }
+}

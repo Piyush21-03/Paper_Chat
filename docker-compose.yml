@@ -1,0 +1,37 @@
+# Local development stack: Qdrant (vector DB) + PostgreSQL (app DB).
+# For the full production stack (Redis, worker, API container) see docker-compose.prod.yml.
+#
+# Usage:
+#   docker compose up -d          # start Qdrant + Postgres
+#   cd backend && python -m alembic upgrade head  # apply schema migrations
+#   cd backend && uvicorn main:app --reload        # start the API
+
+services:
+  qdrant:
+    image: qdrant/qdrant:latest
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_storage:/qdrant/storage
+
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-paperchat}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
+      POSTGRES_DB: ${POSTGRES_DB:-paperchat}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U paperchat"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  qdrant_storage:
+  postgres_data:

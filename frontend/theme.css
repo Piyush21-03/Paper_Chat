@@ -1,0 +1,83 @@
+/* Theme tokens. Dark is the default (matches PaperChat's original look);
+   [data-theme="light"] on <html> swaps to a light, accessible palette.
+   Toggle + persistence handled in shell.js (localStorage key
+   "paperchat-theme"). Load this BEFORE style.css/dashboard.css/etc so
+   the vars are defined when those files' var() references resolve. */
+
+:root {
+    /* ---- Design system: spacing / radius / type scale ---- */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 24px;
+    --space-6: 32px;
+
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+
+    --text-xs: 11px;
+    --text-sm: 13px;
+    --text-md: 14px;
+    --text-lg: 16px;
+
+    /* ---- Brand (stable across themes) ---- */
+    --green: #4a5b56;
+    --green2: #50746a;
+    --mint: #7fd6ac;
+    --danger: #e06060;
+    --info: #6fb3e0;
+    --warn: #e0c04a;
+
+    /* ---- Dark theme (default) ---- */
+    --bg: #040505;
+    --surface: #0b0b0b;
+    --surface-2: #16181a;
+    --surface-translucent: rgba(0, 0, 0, 0.78);
+    --hover: rgba(255, 255, 255, 0.05);
+    --overlay: rgba(0, 0, 0, 0.6);
+    --ink: #ffffff;
+    --muted: #93a19a;
+    --line: #262a27;
+}
+
+html[data-theme="light"] {
+    --bg: #f7f8f5;
+    --surface: #ffffff;
+    --surface-2: #eef1ee;
+    --surface-translucent: rgba(255, 255, 255, 0.86);
+    --hover: rgba(0, 0, 0, 0.04);
+    --overlay: rgba(20, 24, 22, 0.45);
+    --ink: #1a1f1c;
+    --muted: #5b6560;
+    --line: #dde3df;
+    --mint: #1f7a52;
+}
+
+/* Semantic status-pill colors (theme-aware for accessible contrast) */
+:root {
+    --status-green-bg: #16301f;
+    --status-green-fg: #52c778;
+    --status-yellow-bg: #2a2a1a;
+    --status-yellow-fg: #e0c04a;
+    --status-red-bg: #341717;
+    --status-red-fg: #e06060;
+    --status-blue-bg: rgba(111, 179, 224, 0.16);
+    --status-blue-fg: #6fb3e0;
+}
+
+html[data-theme="light"] {
+    --status-green-bg: #e3f6ea;
+    --status-green-fg: #16803c;
+    --status-yellow-bg: #fbf1d6;
+    --status-yellow-fg: #93690a;
+    --status-red-bg: #fbe4e2;
+    --status-red-fg: #b3261e;
+    --status-blue-bg: #e2eefa;
+    --status-blue-fg: #1a5f96;
+}
+
+html, body {
+    background-color: var(--bg);
+}

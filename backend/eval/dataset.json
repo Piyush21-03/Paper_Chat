@@ -1,0 +1,91 @@
+{
+  "note": "Seed evaluation set. `document_id` should be filled in with a real uploaded document's id before running (leave null to search across all documents). `relevant_pages` enables exact retrieval precision/recall; omit it if unknown and only answer-quality (judge) metrics will be computed for that case.",
+  "cases": [
+    {
+      "id": "q1",
+      "question": "What is this document about?",
+      "expected_answer": "A high-level description of the document's main subject.",
+      "document_id": null,
+      "relevant_pages": null
+    },
+    {
+      "id": "q2",
+      "question": "What methodology or approach does the document describe?",
+      "expected_answer": null,
+      "document_id": null,
+      "relevant_pages": null
+    },
+    {
+      "id": "q3",
+      "question": "What are the key findings or conclusions?",
+      "expected_answer": null,
+      "document_id": null,
+      "relevant_pages": null
+    },
+    {
+      "id": "q4",
+      "question": "What limitations does the document mention?",
+      "expected_answer": null,
+      "document_id": null,
+      "relevant_pages": null
+    },
+    {
+      "id": "q5",
+      "question": "Summarize the introduction section.",
+      "expected_answer": null,
+      "document_id": null,
+      "relevant_pages": null
+    },
+    {
+      "id": "q6",
+      "question": "What data or dataset was used, if any?",
+      "expected_answer": null,
+      "document_id": null,
+      "relevant_pages": null
+    },
+    {
+      "id": "q7",
+      "question": "Who are the authors or what organization produced this document?",
+      "expected_answer": null,
+      "document_id": null,
+      "relevant_pages": null
+    },
+    {
+      "id": "q8",
+      "question": "What future work or next steps are suggested?",
+      "expected_answer": null,
+      "document_id": null,
+      "relevant_pages": null
+    },
+    {
+      "id": "q9",
+      "question": "Are there any numerical results or metrics reported?",
+      "expected_answer": null,
+      "document_id": null,
+      "relevant_pages": null
+    },
+    {
+      "id": "q10",
+      "question": "What problem is the document trying to solve?",
+      "expected_answer": null,
+      "document_id": null,
+      "relevant_pages": null
+    },
+    {
+      "id": "q11",
+      "question": "What is the capital of France?",
+      "expected_answer": "I couldn't find this information in the uploaded document.",
+      "document_id": null,
+      "relevant_pages": null,
+      "note": "Adversarial/out-of-scope case: verifies the system correctly refuses to answer from outside knowledge."
+    },
+    {
+      "id": "q12",
+      "question": "What were its limitations?",
+      "expected_answer": null,
+      "document_id": null,
+      "relevant_pages": null,
+      "note": "Standalone version of a common follow-up; pairs conceptually with q4 to sanity-check query rewriting when run inside a conversation (not exercised by the standalone eval runner)."
+    }
+  ]
+}
