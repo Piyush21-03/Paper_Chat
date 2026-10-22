@@ -2,8 +2,22 @@
 driven with safe local-dev defaults. Never hardcode secrets here."""
 
 import os
+from pathlib import Path
 from dataclasses import dataclass, field
 from typing import List
+
+try:
+    from dotenv import load_dotenv
+    _root_env = Path(__file__).resolve().parent.parent / ".env"
+    _backend_env = Path(__file__).resolve().parent / ".env"
+    if _root_env.exists():
+        load_dotenv(_root_env)
+    elif _backend_env.exists():
+        load_dotenv(_backend_env)
+    else:
+        load_dotenv()
+except ImportError:
+    pass
 
 
 def _bool(name: str, default: bool) -> bool:
