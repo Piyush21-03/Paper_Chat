@@ -618,19 +618,19 @@ async def ask_stream(
 from fastapi.responses import FileResponse
 import os
 
-REACT_DIST_DIR = PROJECT_DIR / "frontend-react" / "dist"
+FRONTEND_DIST_DIR = PROJECT_DIR / "frontend" / "dist"
 
 @app.api_route("/{path_name:path}", methods=["GET"])
 async def catch_all(path_name: str):
     if path_name.startswith("api/") or path_name == "ask" or path_name == "ask/stream":
         return JSONResponse(status_code=404, content={"detail": "Not Found"})
         
-    file_path = REACT_DIST_DIR / path_name
+    file_path = FRONTEND_DIST_DIR / path_name
     if path_name and file_path.is_file():
         return FileResponse(file_path)
         
-    index_path = REACT_DIST_DIR / "index.html"
+    index_path = FRONTEND_DIST_DIR / "index.html"
     if index_path.is_file():
         return FileResponse(index_path)
-        
-    return JSONResponse(status_code=404, content={"detail": "Frontend build not found. Run 'npm run build' in frontend-react."})
+
+    return JSONResponse(status_code=404, content={"detail": "Frontend build not found. Run 'npm run build' in frontend directory."})

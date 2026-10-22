@@ -313,7 +313,7 @@ Only the most relevant evidence is passed to the LLM to reduce unnecessary conte
 ```text
 Paperchat/
 │
-├── backend/
+├── backend/                   # FastAPI application & business logic
 │   ├── main.py
 │   ├── config.py
 │   ├── db.py
@@ -321,41 +321,61 @@ Paperchat/
 │   ├── schemas.py
 │   ├── auth.py
 │   ├── rag.py
+│   ├── research.py
+│   ├── calculator.py
+│   ├── tables.py
 │   ├── jobs.py
 │   ├── job_queue.py
+│   ├── rate_limit.py
 │   │
-│   ├── retrieval/
-│   │   ├── ...
+│   ├── retrieval/             # Hybrid RAG retrieval pipeline & search
+│   │   ├── clients.py
+│   │   ├── dense_search.py
+│   │   ├── keyword_search.py
+│   │   ├── fusion.py
+│   │   ├── rerank.py
+│   │   ├── context.py
+│   │   └── pipeline.py
 │   │
-│   ├── routers/
+│   ├── routers/               # Modular API endpoint routers
 │   │   ├── auth.py
 │   │   ├── documents.py
 │   │   ├── conversations.py
+│   │   ├── research.py
 │   │   ├── search.py
 │   │   ├── eval.py
 │   │   └── settings.py
 │   │
-│   └── eval/
-│       └── ...
-│
-├── frontend/
-│   ├── index.html
-│   ├── chat.html
-│   ├── search.html
-│   ├── document.html
-│   ├── eval.html
-│   ├── settings.html
-│   ├── login.html
-│   ├── register.html
+│   ├── eval/                  # Retrieval evaluation suite
+│   │   ├── dataset.json
+│   │   ├── metrics.py
+│   │   └── runner.py
 │   │
-│   ├── dashboard.js
-│   ├── chat.js
-│   ├── search.js
-│   ├── eval.js
-│   └── ...
+│   ├── alembic/               # Schema migrations
+│   │   └── versions/
+│   │
+│   └── tests/                 # Automated test suites
+│       ├── test_api_e2e.py
+│       └── test_retrieval_pipeline.py
+│
+├── frontend/                  # Modern React 19 + Vite Single-Page Application
+│   ├── src/
+│   │   ├── components/        # Shell, PdfViewer
+│   │   ├── context/           # AuthContext
+│   │   ├── pages/             # Dashboard, Chat, Document, Research, Eval, Settings
+│   │   ├── utils/             # API client with JWT interceptors
+│   │   ├── App.jsx
+│   │   ├── index.css
+│   │   └── main.jsx
+│   ├── package.json
+│   └── vite.config.js
+│
+├── scripts/                   # Operations & maintenance scripts
+│   ├── run_tests.py
+│   └── migrate_sqlite_to_postgres.py
 │
 ├── requirements.txt
-├── Dockerfile
+├── docker-compose.yml
 ├── docker-compose.prod.yml
 ├── .env.example
 ├── .gitignore
