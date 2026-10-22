@@ -53,3 +53,10 @@ Thumbs.db
 .vscode/
 *.swp
 *.swo
+
+# Local Qdrant binary & storage
+qdrant.exe
+qdrant.zip
+qdrant_storage/
+.qdrant-initialized
+storage/
