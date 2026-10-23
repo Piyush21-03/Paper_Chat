@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { BookOpen, Eye, EyeOff, ArrowLeft, AlertCircle, Loader2, CheckCircle2 } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
+import { Eye, EyeOff, ArrowLeft, AlertCircle, Loader2, CheckCircle2, ArrowRight, Sun, Moon } from 'lucide-react';
 
 const PasswordStrength = ({ password }) => {
   const checks = [
@@ -11,10 +12,10 @@ const PasswordStrength = ({ password }) => {
   ];
   if (!password) return null;
   return (
-    <div className="mt-2 space-y-1">
+    <div className="mt-2.5 space-y-1.5">
       {checks.map(({ label, ok }) => (
-        <div key={label} className={`flex items-center gap-1.5 text-xs ${ok ? 'text-green-400' : 'text-slate-500'}`}>
-          <CheckCircle2 size={11} className={ok ? 'text-green-400' : 'text-slate-600'} />
+        <div key={label} className={`flex items-center gap-1.5 text-xs ${ok ? 'text-emerald-500 font-medium' : 'text-zinc-500'}`}>
+          <CheckCircle2 size={11} className={ok ? 'text-emerald-500' : 'text-zinc-400'} />
           {label}
         </div>
       ))}
@@ -29,6 +30,7 @@ const Register = () => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { register, user } = useAuth();
+  const { theme, toggleTheme, isDark } = useTheme();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -37,10 +39,7 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (password.length < 8) {
-      setError('Password must be at least 8 characters.');
-      return;
-    }
+    if (password.length < 8) { setError('Password must be at least 8 characters.'); return; }
     setError('');
     setIsLoading(true);
     try {
@@ -54,51 +53,84 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex bg-slate-950">
+    <div
+      className="min-h-screen flex relative overflow-hidden transition-colors"
+      style={{ background: 'var(--bg-void)', color: 'var(--text-primary)' }}
+    >
+      <div className="stars-layer-1" aria-hidden="true" />
+      <div className="stars-layer-2" aria-hidden="true" />
+      <div className="pointer-events-none fixed inset-0 z-0" style={{ background: 'radial-gradient(ellipse 50% 50% at 70% 40%, rgba(239,35,60,0.06) 0%, transparent 70%)' }} aria-hidden="true" />
+
+      {/* Floating Theme Toggle (Top Right) */}
+      <div className="absolute top-5 right-5 z-20">
+        <button
+          onClick={toggleTheme}
+          className="p-2 rounded-full border transition-all cursor-pointer flex items-center justify-center shadow-sm"
+          style={{
+            background: 'var(--bg-surface)',
+            borderColor: 'var(--border-subtle)',
+            color: 'var(--text-primary)',
+          }}
+          title={`Switch to ${isDark ? 'Light' : 'Dark'} mode`}
+        >
+          {isDark ? <Sun size={17} className="text-amber-400" /> : <Moon size={17} className="text-[#ef233c]" />}
+        </button>
+      </div>
+
       {/* Left panel */}
-      <div className="hidden lg:flex flex-col justify-between w-[420px] bg-gradient-to-b from-slate-800 to-slate-900 border-r border-white/5 p-10 flex-shrink-0">
+      <div
+        className="hidden lg:flex flex-col justify-between w-[400px] p-10 flex-shrink-0 relative z-10"
+        style={{ background: 'var(--bg-deep)', borderRight: '1px solid var(--border-subtle)' }}
+      >
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-600/30">
-            <BookOpen size={16} className="text-white" />
-          </div>
-          <span className="text-white font-bold text-lg">PaperChat</span>
+          <div className="w-6 h-6 rounded-sm" style={{ background: 'var(--accent-red)', transform: 'rotate(45deg)' }} />
+          <span className="font-bold text-lg tracking-tight font-manrope ml-1" style={{ color: 'var(--text-primary)' }}>PaperChat</span>
         </div>
-        <div className="space-y-8">
+
+        <div className="space-y-7">
           {[
-            { emoji: '📄', title: 'Upload any PDF', desc: 'Research papers, reports, textbooks — instantly indexed.' },
-            { emoji: '💬', title: 'Ask in plain English', desc: 'No query syntax needed. Just ask your question.' },
-            { emoji: '🔍', title: 'Get cited answers', desc: 'Every answer links back to the source page.' },
+            { emoji: '📄', title: 'Upload & Ingest PDFs', desc: 'Pre-processed with vector embeddings and BM25 inverted indices.' },
+            { emoji: '💬', title: 'Scholarly Dialogue', desc: 'Targeted technical reasoning powered by verified source context.' },
+            { emoji: '🔍', title: 'Grounded Citations', desc: 'Direct jump links to exact passages in the document viewport.' },
           ].map(({ emoji, title, desc }) => (
-            <div key={title} className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-xl flex-shrink-0">
+            <div key={title} className="flex items-start gap-3.5">
+              <div
+                className="w-9 h-9 rounded-lg flex items-center justify-center text-base flex-shrink-0"
+                style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)' }}
+              >
                 {emoji}
               </div>
               <div>
-                <p className="text-white font-semibold text-sm">{title}</p>
-                <p className="text-slate-400 text-sm mt-0.5">{desc}</p>
+                <p className="font-semibold text-xs font-manrope" style={{ color: 'var(--text-primary)' }}>{title}</p>
+                <p className="text-[11px] mt-0.5 leading-relaxed" style={{ color: 'var(--text-muted)' }}>{desc}</p>
               </div>
             </div>
           ))}
         </div>
+
+        <div className="text-[11px] font-mono" style={{ color: 'var(--text-muted)' }}>
+          Research-grade retrieval augmented generation
+        </div>
       </div>
 
       {/* Right panel */}
-      <div className="flex-1 flex flex-col items-center justify-center px-6 py-12">
+      <div className="flex-1 flex flex-col items-center justify-center px-6 py-12 relative z-10">
         <div className="w-full max-w-md">
           <Link
             to="/"
-            className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-slate-200 transition-colors mb-8"
+            className="inline-flex items-center gap-1.5 text-xs font-medium transition-colors mb-8 cursor-pointer"
+            style={{ color: 'var(--text-muted)' }}
           >
-            <ArrowLeft size={15} /> Back to home
+            <ArrowLeft size={14} /> Back to home
           </Link>
 
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-white mb-2">Create your account</h1>
-            <p className="text-slate-400">Start chatting with your research papers for free</p>
+            <h1 className="text-3xl font-bold mb-2 tracking-tight font-manrope" style={{ color: 'var(--text-primary)' }}>Create Account</h1>
+            <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Initialize your personal research workspace</p>
           </div>
 
           {error && (
-            <div className="mb-6 flex items-start gap-3 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm">
+            <div className="mb-5 flex items-start gap-2.5 p-3.5 rounded-lg text-sm" style={{ background: 'var(--accent-red-tint)', border: '1px solid var(--border-red)', color: 'var(--accent-red)' }}>
               <AlertCircle size={16} className="shrink-0 mt-0.5" />
               <span>{error}</span>
             </div>
@@ -106,68 +138,55 @@ const Register = () => {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2" htmlFor="email">
-                Email address
-              </label>
+              <label className="block text-xs font-semibold mb-2" style={{ color: 'var(--text-secondary)' }} htmlFor="email">Email Address</label>
               <input
-                id="email"
-                type="email"
-                required
-                autoComplete="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 bg-slate-800/60 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                placeholder="you@example.com"
+                id="email" type="email" required autoComplete="email"
+                value={email} onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-4 py-3 rounded-lg text-sm focus:outline-none transition-all"
+                style={{ background: 'var(--bg-surface)', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)' }}
+                onFocus={(e) => e.target.style.borderColor = 'var(--accent-red)'}
+                onBlur={(e) => e.target.style.borderColor = 'var(--border-subtle)'}
+                placeholder="researcher@university.edu"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2" htmlFor="password">
-                Password
-              </label>
+              <label className="block text-xs font-semibold mb-2" style={{ color: 'var(--text-secondary)' }} htmlFor="password">Password</label>
               <div className="relative">
                 <input
-                  id="password"
-                  type={showPassword ? 'text' : 'password'}
-                  required
-                  autoComplete="new-password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 pr-12 bg-slate-800/60 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                  placeholder="Min 8 characters"
-                  minLength={8}
+                  id="password" type={showPassword ? 'text' : 'password'} required autoComplete="new-password"
+                  value={password} onChange={(e) => setPassword(e.target.value)}
+                  className="w-full px-4 py-3 pr-12 rounded-lg text-sm focus:outline-none transition-all"
+                  style={{ background: 'var(--bg-surface)', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)' }}
+                  onFocus={(e) => e.target.style.borderColor = 'var(--accent-red)'}
+                  onBlur={(e) => e.target.style.borderColor = 'var(--border-subtle)'}
+                  placeholder="Min 8 characters" minLength={8}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(v => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-slate-200 transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 transition-colors cursor-pointer"
+                  style={{ color: 'var(--text-muted)' }}
                   tabIndex={-1}
                 >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
               <PasswordStrength password={password} />
             </div>
 
             <button
-              type="submit"
-              id="register-submit"
-              disabled={isLoading}
-              className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-semibold transition-all disabled:opacity-60 disabled:cursor-not-allowed flex justify-center items-center gap-2 shadow-lg shadow-blue-600/20 mt-2"
+              type="submit" id="register-submit" disabled={isLoading}
+              className="w-full flex items-center justify-center gap-2 text-white font-semibold text-sm tracking-wide disabled:opacity-50 disabled:cursor-not-allowed mt-3 py-3 rounded-lg transition-colors cursor-pointer"
+              style={{ background: 'var(--accent-red)' }}
             >
-              {isLoading ? (
-                <><Loader2 size={18} className="animate-spin" /> Creating account…</>
-              ) : (
-                'Create free account'
-              )}
+              {isLoading ? <><Loader2 size={16} className="animate-spin" /> Creating Account…</> : <>Create Account <ArrowRight size={16} /></>}
             </button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-slate-500">
+          <p className="mt-8 text-center text-sm" style={{ color: 'var(--text-muted)' }}>
             Already have an account?{' '}
-            <Link to="/login" className="text-blue-400 font-medium hover:text-blue-300 transition-colors">
-              Sign in
-            </Link>
+            <Link to="/login" className="font-semibold transition-colors" style={{ color: 'var(--accent-red)' }}>Sign in</Link>
           </p>
         </div>
       </div>

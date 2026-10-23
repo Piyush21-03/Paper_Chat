@@ -3,8 +3,9 @@ retrieval package and rag.py. Centralized here so retrieval/* modules
 never need to import rag.py (avoids circular imports).
 """
 
+import os
+
 from dotenv import load_dotenv
-from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_huggingface import HuggingFaceEmbeddings
 from qdrant_client import QdrantClient
 from qdrant_client import models as qmodels
@@ -30,13 +31,30 @@ embedding_model = HuggingFaceEmbeddings(
 
 
 # ========================================
-# Gemini LLM
+# LLM — provider selected by LLM_PROVIDER env var
+# Supported: "groq" (default, free tier) | "google"
 # ========================================
 
-llm = ChatGoogleGenerativeAI(
-    model="gemini-2.5-flash",
-    temperature=0
-)
+_provider = os.environ.get("LLM_PROVIDER", "groq").strip().lower()
+
+if _provider == "groq":
+    from langchain_groq import ChatGroq
+    _groq_key = os.environ.get("GROQ_API_KEY", "").strip()
+    _groq_model = os.environ.get("GROQ_MODEL", "openai/gpt-oss-120b").strip()
+    llm = ChatGroq(
+        model=_groq_model,
+        temperature=0,
+        groq_api_key=_groq_key,
+    )
+    logger.info("LLM provider: Groq (%s)", _groq_model)
+
+else:
+    from langchain_google_genai import ChatGoogleGenerativeAI
+    llm = ChatGoogleGenerativeAI(
+        model="gemini-2.5-flash",
+        temperature=0,
+    )
+    logger.info("LLM provider: Google Gemini (gemini-2.5-flash)")
 
 
 # ========================================

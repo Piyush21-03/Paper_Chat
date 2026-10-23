@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import PdfViewer from '../components/PdfViewer';
-import { MessageSquare, Plus, Send, StopCircle, Trash2, ArrowLeft, Loader2, BookOpen } from 'lucide-react';
+import { MessageSquare, Plus, Send, StopCircle, Trash2, ArrowLeft, Loader2, BookOpen, FileText, ChevronRight } from 'lucide-react';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import toast from 'react-hot-toast';
@@ -99,10 +99,36 @@ const Chat = () => {
   const handleSourceClick = (docId, pageNum) => {
     setActiveDocId(docId);
     if (pageNum && pdfRef.current) {
-      // Delay navigation slightly to allow PDF to load if docId changed
       setTimeout(() => {
         pdfRef.current.goToPage(pageNum);
-      }, 500);
+      }, 350);
+    }
+  };
+
+  // Convert markdown and convert citation markers e.g. [Page 4] into interactive Citation Badges
+  const renderMessageContent = (content) => {
+    if (!content) return '';
+    const rawHtml = marked.parse(content);
+    // Replace [Page X], [p. X], [pp. X] with pill-shaped Citation Badges
+    const badgeHtml = rawHtml.replace(
+      /\[(?:Page|p\.|pp\.)\s*(\d+)\]/gi,
+      '<button type="button" class="citation-badge" data-page="$1" title="Jump to Page $1">📄 Page $1</button>'
+    );
+    return DOMPurify.sanitize(badgeHtml, {
+      ADD_TAGS: ['button'],
+      ADD_ATTR: ['data-page', 'target', 'title', 'class']
+    });
+  };
+
+  const handleMessageContainerClick = (e) => {
+    const badge = e.target.closest('[data-page]');
+    if (badge) {
+      e.preventDefault();
+      const p = parseInt(badge.getAttribute('data-page'), 10);
+      if (!isNaN(p) && pdfRef.current) {
+        pdfRef.current.goToPage(p);
+        toast.success(`Jumped to Page ${p}`);
+      }
     }
   };
 
@@ -218,7 +244,6 @@ const Chat = () => {
         await loadConversations();
         await loadConversation(newConvId);
       } else if (currentConv) {
-        // Refresh conversation history to get DB IDs for messages
         await loadConversation(currentConv.id);
       }
 
@@ -246,42 +271,57 @@ const Chat = () => {
   };
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] -m-6 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700">
+    <div className="flex h-[calc(100vh-4rem)] -m-6" style={{ background: 'var(--bg-void)', borderTop: '1px solid var(--border-subtle)' }}>
       
       {/* Sidebar: Conversations */}
-      <div className="w-64 border-r border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 flex flex-col hidden md:flex">
-        <div className="p-4 border-b border-slate-200 dark:border-slate-700">
+      <div className="w-64 flex flex-col hidden md:flex shrink-0" style={{ borderRight: '1px solid var(--border-subtle)', background: 'var(--bg-deep)' }}>
+        <div className="p-3.5" style={{ borderBottom: '1px solid var(--border-subtle)' }}>
           <button 
             onClick={handleNewChat}
-            className="w-full flex items-center justify-center gap-2 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+            className="w-full flex items-center justify-center gap-2 py-2 px-3 text-white rounded-lg text-xs font-bold tracking-wider uppercase transition-colors"
+            style={{ background: 'var(--accent-red)' }}
           >
-            <Plus size={18} /> New Chat
+            <Plus size={16} strokeWidth={2.2} /> New Query
           </button>
         </div>
-        <div className="flex-1 overflow-y-auto p-2 space-y-1">
+        
+        <div className="flex-1 overflow-y-auto p-2.5 space-y-1">
+          <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-widest" style={{ color: 'var(--accent-red)' }}>
+            Recent Inquiries
+          </div>
           {conversations.length === 0 ? (
-            <div className="text-center p-4 text-sm text-slate-500">No conversations yet</div>
+            <div className="text-center py-8 px-4 text-xs text-zinc-600">
+              No past conversations yet
+            </div>
           ) : (
             conversations.map(conv => (
               <div 
                 key={conv.id}
-                className={`group flex items-center justify-between p-2 rounded-lg cursor-pointer transition-colors ${
-                  currentConv?.id === conv.id 
-                    ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300' 
-                    : 'hover:bg-slate-200 dark:hover:bg-slate-700/50 text-slate-700 dark:text-slate-300'
-                }`}
+                className="group flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer transition-all"
+                style={currentConv?.id === conv.id ? {
+                  background: 'var(--sidebar-active-bg)',
+                  color: 'var(--accent-red)',
+                  border: '1px solid var(--border-red)',
+                  fontWeight: 600,
+                } : {
+                  color: 'var(--text-secondary)',
+                  border: '1px solid transparent',
+                }}
                 onClick={() => loadConversation(conv.id)}
               >
                 <div className="flex items-center gap-2 overflow-hidden">
-                  <MessageSquare size={16} className="shrink-0 opacity-70" />
-                  <span className="truncate text-sm font-medium">{conv.title || 'New Conversation'}</span>
+                  <MessageSquare size={15} className="shrink-0" style={{ color: currentConv?.id === conv.id ? 'var(--accent-red)' : 'var(--text-muted)' }} />
+                  <span className="truncate text-xs">{conv.title || 'Untitled Query'}</span>
                 </div>
                 <button 
                   onClick={(e) => { e.stopPropagation(); handleDeleteConv(conv.id); }}
-                  className="opacity-0 group-hover:opacity-100 p-1 text-slate-400 hover:text-red-500 rounded transition-all"
+                  className="opacity-0 group-hover:opacity-100 p-1 transition-all rounded"
+                  style={{ color: 'var(--text-muted)' }}
+                  onMouseEnter={(e) => e.currentTarget.style.color = 'var(--accent-red)'}
+                  onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
                   title="Delete"
                 >
-                  <Trash2 size={14} />
+                  <Trash2 size={13} />
                 </button>
               </div>
             ))
@@ -289,72 +329,100 @@ const Chat = () => {
         </div>
       </div>
 
-      {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col min-w-0 bg-white dark:bg-slate-900">
+      {/* Center: Interactive Chat Panel */}
+      <div className="flex-1 flex flex-col min-w-0" style={{ background: 'var(--bg-void)' }}>
         
         {/* Header */}
-        <div className="h-14 border-b border-slate-200 dark:border-slate-700 flex items-center px-4 shrink-0 bg-white dark:bg-slate-900">
-          <h2 className="font-semibold text-slate-800 dark:text-slate-200 truncate">
-            {currentConv ? currentConv.title : 'New Chat'}
-          </h2>
+        <div className="h-14 flex items-center justify-between px-5 shrink-0" style={{ borderBottom: '1px solid var(--border-subtle)', background: 'var(--bg-deep)' }}>
+          <div className="flex items-center gap-2 overflow-hidden">
+            <h2 className="text-sm font-semibold truncate font-manrope" style={{ color: 'var(--text-primary)' }}>
+              {currentConv ? currentConv.title : 'Scholarly Reader & QA'}
+            </h2>
+          </div>
+          {activeDocId && (
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold" style={{ background: 'var(--accent-red-tint)', border: '1px solid var(--border-red)', color: 'var(--accent-red)' }}>
+              <FileText size={12} />
+              <span>Context Linked</span>
+            </div>
+          )}
         </div>
 
-        {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-6">
+        {/* Message Feed */}
+        <div 
+          onClick={handleMessageContainerClick}
+          className="flex-1 overflow-y-auto p-5 space-y-5"
+          style={{ background: 'var(--bg-void)' }}
+        >
           {messages.length === 0 ? (
-            <div className="h-full flex flex-col items-center justify-center text-slate-500 dark:text-slate-400">
-              <MessageSquare size={48} className="mb-4 opacity-20" />
-              <p className="text-lg font-medium text-slate-700 dark:text-slate-300">Ask anything about your documents.</p>
-              <p className="text-sm mt-2 max-w-md text-center">
-                Select a document first or just start typing. PaperChat will find the relevant context.
+            <div className="h-full flex flex-col items-center justify-center text-center p-6">
+              <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-4" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: 'var(--accent-red)' }}>
+                <BookOpen size={24} strokeWidth={2} />
+              </div>
+              <h3 className="text-lg font-bold font-manrope" style={{ color: 'var(--text-primary)' }}>Document Inquiry</h3>
+              <p className="text-xs mt-2 max-w-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+                Pose specific technical questions or request syntheses. Citations will link directly to exact document pages.
               </p>
             </div>
           ) : (
             messages.map((msg, i) => (
               <div key={msg.id || i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[85%] rounded-2xl px-5 py-3 ${
-                  msg.role === 'user' 
-                    ? 'bg-blue-600 text-white rounded-br-none' 
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 rounded-bl-none border border-slate-200 dark:border-slate-700'
-                }`}>
-                  {msg.role === 'assistant' ? (
-                    <div className="prose prose-sm dark:prose-invert max-w-none break-words"
-                         dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(marked.parse(msg.content || '')) }} />
-                  ) : (
+                {msg.role === 'user' ? (
+                  <div
+                    className="max-w-[85%] rounded-lg px-4 py-3 text-sm leading-relaxed"
+                    style={{
+                      background: 'var(--bg-raised)',
+                      color: 'var(--text-primary)',
+                      border: '1px solid var(--border-subtle)',
+                    }}
+                  >
                     <div className="whitespace-pre-wrap">{msg.content}</div>
-                  )}
-                  
-                  {msg._streaming && (
-                    <span className="inline-block w-2 h-4 bg-slate-400 dark:bg-slate-500 animate-pulse ml-1 align-middle"></span>
-                  )}
-                  
-                  {msg.sources && msg.sources.length > 0 && (
-                    <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-700">
-                      <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Sources</p>
-                      <div className="flex flex-wrap gap-2">
-                        {msg.sources.map((s, idx) => (
-                          <button
-                            key={idx}
-                            onClick={() => handleSourceClick(s.document_id, s.page_number)}
-                            className="flex items-center gap-1.5 px-2 py-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-600 hover:border-blue-400 dark:hover:border-blue-500 rounded text-xs text-slate-600 dark:text-slate-300 transition-colors"
-                          >
-                            <BookOpen size={12} className="text-blue-500" />
-                          <span className="truncate max-w-[150px]">{s.filename || s.document_name || 'Source'}</span>
-                            {s.page_number && <span className="opacity-60 text-[10px]">p.{s.page_number}</span>}
-                          </button>
-                        ))}
+                  </div>
+                ) : (
+                  /* Assistant Card */
+                  <div className="max-w-[92%] rounded-lg px-5 py-4" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)' }}>
+                    <div 
+                      className="academic-prose"
+                      dangerouslySetInnerHTML={{ __html: renderMessageContent(msg.content || '') }} 
+                    />
+                    
+                    {msg._streaming && (
+                      <span className="inline-block w-2 h-4 animate-pulse ml-1 align-middle rounded-xs" style={{ background: 'var(--accent-red)' }}></span>
+                    )}
+                    
+                    {/* Cited Sources List */}
+                    {msg.sources && msg.sources.length > 0 && (
+                      <div className="mt-4 pt-3" style={{ borderTop: '1px solid var(--border-subtle)' }}>
+                        <p className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--accent-red)' }}>
+                          Evidence & Citations
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {msg.sources.map((s, idx) => (
+                            <button
+                              key={idx}
+                              onClick={() => handleSourceClick(s.document_id, s.page_number)}
+                              className="citation-badge"
+                              title={`Jump to ${s.filename || 'source'} Page ${s.page_number || ''}`}
+                            >
+                              <BookOpen size={11} />
+                              <span className="truncate max-w-[160px]">{s.filename || s.document_name || 'Source'}</span>
+                              {s.page_number && (
+                                <span className="font-mono text-[10px] opacity-85 ml-0.5">p.{s.page_number}</span>
+                              )}
+                            </button>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </div>
+                    )}
+                  </div>
+                )}
               </div>
             ))
           )}
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Input */}
-        <div className="p-4 border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shrink-0">
+        {/* Interactive Input Box */}
+        <div className="p-4 shrink-0" style={{ borderTop: '1px solid var(--border-subtle)', background: 'var(--bg-deep)' }}>
           <form onSubmit={handleAsk} className="relative max-w-4xl mx-auto">
             <textarea
               value={question}
@@ -365,36 +433,50 @@ const Chat = () => {
                   handleAsk(e);
                 }
               }}
-              placeholder="Ask a question..."
-              className="w-full pl-4 pr-14 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all resize-none dark:text-white"
+              placeholder="Query paper findings, methodology, formulas, or conclusions..."
+              className="w-full pl-4 pr-14 py-3 rounded-lg text-sm focus:outline-none transition-all resize-none leading-relaxed"
+              style={{
+                minHeight: '52px',
+                maxHeight: '180px',
+                background: 'var(--bg-surface)',
+                color: 'var(--text-primary)',
+                border: '1px solid var(--border-subtle)',
+              }}
+              onFocus={(e) => e.target.style.borderColor = 'var(--accent-red)'}
+              onBlur={(e) => e.target.style.borderColor = 'var(--border-subtle)'}
               rows={1}
-              style={{ minHeight: '52px', maxHeight: '200px' }}
             />
             {isStreaming ? (
               <button 
                 type="button"
                 onClick={handleStop}
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
-                title="Stop generation"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-2 rounded-md transition-colors"
+                style={{ color: 'var(--accent-red)' }}
+                title="Halt Generation"
               >
-                <StopCircle size={20} />
+                <StopCircle size={18} />
               </button>
             ) : (
               <button 
                 type="submit"
                 disabled={!question.trim()}
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-blue-600 text-white rounded-lg disabled:opacity-50 disabled:bg-slate-300 dark:disabled:bg-slate-700 transition-colors"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-2 text-white rounded-md disabled:opacity-30 transition-colors cursor-pointer"
+                style={{ background: 'var(--accent-red)' }}
+                title="Send Inquiry"
               >
-                <Send size={18} />
+                <Send size={16} />
               </button>
             )}
           </form>
+          <div className="text-[11px] text-center mt-2 font-medium" style={{ color: 'var(--text-muted)' }}>
+            Responses extract verified passages with grounded citations.
+          </div>
         </div>
 
       </div>
 
-      {/* Right side: PDF Viewer */}
-      <div className="w-1/3 border-l border-slate-200 dark:border-slate-700 hidden lg:block bg-slate-100 dark:bg-slate-950">
+      {/* Right side: Sharp, Clean Split-Screen Divider & Pure White (#FFFFFF) PDF Canvas */}
+      <div className="w-1/2 hidden lg:block" style={{ borderLeft: '1px solid var(--border-subtle)', background: 'var(--bg-void)' }}>
         <PdfViewer ref={pdfRef} documentId={activeDocId} />
       </div>
 
@@ -403,3 +485,4 @@ const Chat = () => {
 };
 
 export default Chat;
+
