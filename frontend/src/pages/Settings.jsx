@@ -102,14 +102,20 @@ const Settings = () => {
   return (
     <div className="-m-6 min-h-full relative overflow-hidden p-6">
 
-      {/* ── Background layer ── */}
+      {/* ── Background layer (cohesive atmospheric gradient + ambient glows) ── */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         {isDark ? (
           <>
-            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(160deg, #180507 0%, #0a0a0c 50%, #000000 100%)' }} />
-            <div style={{ position: 'absolute', top: '-15%', left: '30%', width: '55%', height: '55%', background: 'radial-gradient(ellipse, rgba(239,35,60,0.09) 0%, transparent 70%)', filter: 'blur(60px)' }} />
-            <div style={{ position: 'absolute', bottom: 0, right: 0, width: '35%', height: '35%', background: 'radial-gradient(ellipse, rgba(185,28,28,0.07) 0%, transparent 65%)', filter: 'blur(50px)' }} />
-            <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px)', backgroundSize: '48px 48px', maskImage: 'radial-gradient(ellipse 70% 60% at 50% 50%, black 40%, transparent 100%)', WebkitMaskImage: 'radial-gradient(ellipse 70% 60% at 50% 50%, black 40%, transparent 100%)' }} />
+            <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at 50% 0%, #1e0609 0%, #120406 35%, #0a0a0d 70%, #030304 100%)' }} />
+            <div className="absolute top-1/4 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[650px] bg-red-600/[0.07] rounded-full blur-[140px]" />
+            <div className="absolute bottom-10 right-1/4 w-[500px] h-[500px] bg-red-600/[0.04] rounded-full blur-[130px]" />
+            <div
+              className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.018)1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.018)1px,transparent_1px)] bg-[size:48px_48px]"
+              style={{
+                maskImage: 'radial-gradient(ellipse 90% 90% at 50% 50%, black 50%, transparent 95%)',
+                WebkitMaskImage: 'radial-gradient(ellipse 90% 90% at 50% 50%, black 50%, transparent 95%)',
+              }}
+            />
           </>
         ) : (
           <>

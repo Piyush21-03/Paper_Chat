@@ -48,9 +48,17 @@ const PdfViewer = forwardRef(({ documentId }, ref) => {
         const token = localStorage.getItem('paperchat-token');
         const url = `/api/documents/${documentId}/file`;
           
+        const res = await fetch(url, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {}
+        });
+
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+        }
+
+        const arrayBuffer = await res.arrayBuffer();
         const loadingTask = pdfjsLib.getDocument({
-          url,
-          httpHeaders: { Authorization: `Bearer ${token}` }
+          data: arrayBuffer
         });
         const doc = await loadingTask.promise;
         if (isMounted) {
@@ -64,7 +72,7 @@ const PdfViewer = forwardRef(({ documentId }, ref) => {
         }
       } catch (err) {
         console.error("PDF Load Error", err);
-        if (isMounted) setError('Failed to load PDF');
+        if (isMounted) setError(err.message || 'Failed to load PDF');
       } finally {
         if (isMounted) setLoading(false);
       }
