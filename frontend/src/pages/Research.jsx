@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../utils/api';
+import { useTheme } from '../context/ThemeContext';
 import {
   Folder,
   Plus,
@@ -26,6 +27,7 @@ const Research = () => {
   const [allUserDocuments, setAllUserDocuments] = useState([]);
   const [showDocPicker, setShowDocPicker] = useState(false);
   const [loading, setLoading] = useState(true);
+  const { isDark } = useTheme();
 
   // Synthesis & Analysis State
   const [activeTab, setActiveTab] = useState('synthesize'); // 'synthesize' | 'compare' | 'gaps'
@@ -212,18 +214,67 @@ const Research = () => {
   const linkedIds = new Set((activeWorkspace?.documents || []).map((d) => d.id));
   const availableToAdd = allUserDocuments.filter((d) => !linkedIds.has(d.id));
 
+  /* ── Glassmorphism token ── */
+  const glassPanel = isDark ? {
+    background: 'rgba(10,10,12,0.72)',
+    backdropFilter: 'blur(20px)',
+    WebkitBackdropFilter: 'blur(20px)',
+    borderRight: '1px solid rgba(239,35,60,0.12)',
+  } : {
+    background: 'rgba(255,255,255,0.78)',
+    backdropFilter: 'blur(20px)',
+    WebkitBackdropFilter: 'blur(20px)',
+    borderRight: '1px solid rgba(239,35,60,0.15)',
+  };
+
+  const glassCard = isDark ? {
+    background: 'rgba(15,15,20,0.70)',
+    backdropFilter: 'blur(16px)',
+    WebkitBackdropFilter: 'blur(16px)',
+    border: '1px solid rgba(255,255,255,0.07)',
+    boxShadow: '0 4px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05)',
+  } : {
+    background: 'rgba(255,255,255,0.80)',
+    backdropFilter: 'blur(16px)',
+    WebkitBackdropFilter: 'blur(16px)',
+    border: '1px solid rgba(0,0,0,0.08)',
+    boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
+  };
+
   return (
-    <div className="flex h-full -m-6" style={{ background: 'var(--bg-void)', color: 'var(--text-primary)', borderTop: '1px solid var(--border-subtle)' }}>
+    <div className="flex h-full -m-6 relative overflow-hidden" style={{ color: 'var(--text-primary)', borderTop: '1px solid rgba(239,35,60,0.1)' }}>
+
+      {/* ── Background layer ── */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        {isDark ? (
+          <>
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(160deg, #180507 0%, #0a0a0c 50%, #000000 100%)' }} />
+            <div style={{ position: 'absolute', top: '-15%', left: '30%', width: '55%', height: '55%', background: 'radial-gradient(ellipse, rgba(239,35,60,0.09) 0%, transparent 70%)', filter: 'blur(50px)' }} />
+            <div style={{ position: 'absolute', bottom: 0, right: 0, width: '35%', height: '35%', background: 'radial-gradient(ellipse, rgba(185,28,28,0.07) 0%, transparent 65%)', filter: 'blur(50px)' }} />
+            <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px)', backgroundSize: '48px 48px', maskImage: 'radial-gradient(ellipse 70% 60% at 50% 50%, black 40%, transparent 100%)', WebkitMaskImage: 'radial-gradient(ellipse 70% 60% at 50% 50%, black 40%, transparent 100%)' }} />
+          </>
+        ) : (
+          <>
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(160deg, #fff5f5 0%, #ffffff 50%, #f8fafc 100%)' }} />
+            <div style={{ position: 'absolute', top: '-10%', left: '20%', width: '60%', height: '50%', background: 'radial-gradient(ellipse, rgba(239,35,60,0.06) 0%, transparent 70%)', filter: 'blur(50px)' }} />
+          </>
+        )}
+      </div>
       {/* ── Sidebar: Research Corpora Workspaces ── */}
       <div
-        className="w-64 flex flex-col hidden md:flex shrink-0"
-        style={{ background: 'var(--bg-deep)', borderRight: '1px solid var(--border-subtle)' }}
+        className="w-64 flex flex-col hidden md:flex shrink-0 relative z-10"
+        style={glassPanel}
       >
-        <div className="p-4" style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+        <div className="p-4" style={{ borderBottom: '1px solid rgba(239,35,60,0.12)' }}>
           <button
             onClick={handleCreateWorkspace}
-            className="w-full flex items-center justify-center gap-2 py-2.5 px-3 text-white rounded-lg text-xs font-bold tracking-wider uppercase transition-colors cursor-pointer"
-            style={{ background: 'var(--accent-red)' }}
+            className="w-full flex items-center justify-center gap-2 py-2.5 px-3 text-white rounded-xl text-xs font-bold tracking-wider uppercase transition-all cursor-pointer"
+            style={{
+              background: 'linear-gradient(135deg, #ef233c, #d90429)',
+              boxShadow: '0 4px 15px rgba(239,35,60,0.35)',
+            }}
+            onMouseEnter={e => e.currentTarget.style.boxShadow = '0 6px 20px rgba(239,35,60,0.5)'}
+            onMouseLeave={e => e.currentTarget.style.boxShadow = '0 4px 15px rgba(239,35,60,0.35)'}
           >
             <Plus size={14} strokeWidth={2.5} />
             <span>New Corpus</span>
@@ -279,17 +330,20 @@ const Research = () => {
       </div>
 
       {/* ── Main Canvas Area ── */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative p-6" style={{ background: 'var(--bg-void)' }}>
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative z-10 p-6" style={{ background: 'transparent' }}>
         {!activeWorkspace ? (
           <div
             className="h-full flex flex-col items-center justify-center text-center p-8 rounded-2xl m-4"
-            style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)' }}
+            style={glassCard}
           >
-            <div
-              className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4"
-              style={{ background: 'var(--accent-red-tint)', border: '1px solid var(--border-red)', color: 'var(--accent-red)' }}
-            >
-              <Layers size={26} />
+            <div className="relative mb-4">
+              <div style={{ position: 'absolute', inset: '-20px', background: 'radial-gradient(ellipse, rgba(239,35,60,0.12) 0%, transparent 70%)', filter: 'blur(20px)', pointerEvents: 'none' }} />
+              <div
+                className="w-14 h-14 rounded-2xl flex items-center justify-center relative"
+                style={{ background: 'rgba(239,35,60,0.12)', border: '1px solid rgba(239,35,60,0.25)', color: 'var(--accent-red)', boxShadow: '0 4px 20px rgba(239,35,60,0.15)' }}
+              >
+                <Layers size={26} />
+              </div>
             </div>
             <h3 className="text-base font-bold font-manrope" style={{ color: 'var(--text-primary)' }}>Select or Create a Research Corpus</h3>
             <p className="text-xs mt-2 max-w-md leading-relaxed font-light" style={{ color: 'var(--text-muted)' }}>
@@ -347,11 +401,11 @@ const Research = () => {
               {/* Left Column: Linked Papers (4 cols) */}
               <div
                 className="lg:col-span-4 flex flex-col rounded-2xl overflow-hidden shadow-sm"
-                style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)' }}
+                style={glassCard}
               >
                 <div
                   className="px-4 py-3 flex items-center justify-between"
-                  style={{ borderBottom: '1px solid var(--border-subtle)', background: 'var(--bg-deep)' }}
+                  style={{ borderBottom: '1px solid rgba(239,35,60,0.1)', background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)' }}
                 >
                   <h3 className="text-xs font-semibold flex items-center gap-2 font-manrope" style={{ color: 'var(--text-primary)' }}>
                     <FileText size={14} style={{ color: 'var(--accent-red)' }} /> Corpus Publications
@@ -410,12 +464,12 @@ const Research = () => {
               {/* Right Column: Synthesis, Comparison & Gaps (8 cols) */}
               <div
                 className="lg:col-span-8 flex flex-col rounded-2xl overflow-hidden shadow-sm"
-                style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)' }}
+                style={glassCard}
               >
                 {/* Module Tabs Header */}
                 <div
                   className="px-4 py-2 flex items-center justify-between"
-                  style={{ borderBottom: '1px solid var(--border-subtle)', background: 'var(--bg-deep)' }}
+                  style={{ borderBottom: '1px solid rgba(239,35,60,0.1)', background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)' }}
                 >
                   <div className="flex items-center gap-2">
                     <button

@@ -175,7 +175,7 @@ const Shell = () => {
           </div>
         </header>
 
-        <div className="flex-1 overflow-auto" style={{ background: 'var(--bg-void)' }}>
+        <div className="flex-1 overflow-auto" style={{ background: 'transparent' }}>
           <div className="p-6">
             <Outlet />
           </div>
