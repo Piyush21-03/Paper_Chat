@@ -94,21 +94,26 @@ const Dashboard = () => {
   return (
     <div
       className={`-m-6 p-6 min-h-full relative overflow-hidden font-inter selection:bg-[#ef233c] selection:text-white transition-colors duration-200 ${
-        isDark ? 'bg-black text-white' : 'bg-[#f8fafc] text-[#0f172a]'
+        isDark ? 'text-white' : 'text-[#0f172a]'
       }`}
+      style={{
+        background: isDark
+          ? 'radial-gradient(ellipse 130% 110% at 50% 0%, #4a0a14 0%, #2f060e 35%, #200409 65%, #140206 100%)'
+          : 'linear-gradient(165deg, #fff1f2 0%, #fff5f5 40%, #ffffff 75%, #fef2f2 100%)',
+      }}
       onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
       onDragLeave={(e) => { e.preventDefault(); setIsDragging(false); }}
       onDrop={handleDrop}
     >
-      {/* ── Background Ambient Lighting & Grid (Cohesive Full-Canvas Aesthetic) ── */}
+      {/* ── Background Ambient Lighting & Grid (Fully Gradient Red Aesthetic) ── */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
         {isDark ? (
           <>
-            {/* Rich dark atmospheric gradient across full canvas */}
+            {/* Rich full-spectrum dark red gradient */}
             <div
               className="absolute inset-0"
               style={{
-                background: 'radial-gradient(circle at 50% 0%, #1e0609 0%, #120406 35%, #0a0a0d 70%, #030304 100%)',
+                background: 'linear-gradient(175deg, rgba(74,10,20,0.95) 0%, rgba(47,6,14,0.95) 35%, rgba(32,4,9,0.98) 70%, rgba(20,2,6,1) 100%)',
               }}
             />
             
@@ -116,33 +121,33 @@ const Dashboard = () => {
             <div className="stars-layer-1 opacity-60" />
             <div className="stars-layer-2 opacity-60" />
 
-            {/* Ambient core glow — upper center */}
-            <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[650px] bg-red-600/[0.08] rounded-full blur-[150px]" />
+            {/* Radiant core red ambient glow — top */}
+            <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-[750px] h-[750px] bg-red-600/[0.16] rounded-full blur-[160px]" />
             
-            {/* Ambient secondary glow — mid-lower left */}
-            <div className="absolute top-2/3 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] bg-red-600/[0.05] rounded-full blur-[140px]" />
+            {/* Mid-canvas ambient crimson diffusion */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[650px] bg-red-600/[0.10] rounded-full blur-[170px]" />
             
-            {/* Ambient tertiary glow — bottom right */}
-            <div className="absolute bottom-10 right-10 w-[500px] h-[500px] bg-red-700/[0.04] rounded-full blur-[130px]" />
+            {/* Lower-canvas warm garnet glow */}
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-red-700/[0.08] rounded-full blur-[160px]" />
 
             {/* Subtle grid pattern smoothly covering full viewport */}
             <div
-              className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:48px_48px]"
+              className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:48px_48px]"
               style={{
-                maskImage: 'radial-gradient(ellipse 90% 90% at 50% 50%, black 50%, transparent 95%)',
-                WebkitMaskImage: 'radial-gradient(ellipse 90% 90% at 50% 50%, black 50%, transparent 95%)',
+                maskImage: 'radial-gradient(ellipse 95% 95% at 50% 50%, black 60%, transparent 100%)',
+                WebkitMaskImage: 'radial-gradient(ellipse 95% 95% at 50% 50%, black 60%, transparent 100%)',
               }}
             />
           </>
         ) : (
           <>
-            <div className="absolute inset-0 bg-gradient-to-b from-red-50/50 via-white to-slate-50" />
-            <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-red-500/5 rounded-full blur-[120px]" />
+            <div className="absolute inset-0 bg-gradient-to-b from-red-50/60 via-red-50/20 to-white" />
+            <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-red-500/10 rounded-full blur-[120px]" />
             <div
-              className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:48px_48px]"
+              className="absolute inset-0 bg-[linear-gradient(rgba(239,35,60,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(239,35,60,0.03)_1px,transparent_1px)] bg-[size:48px_48px]"
               style={{
-                maskImage: 'radial-gradient(ellipse 90% 90% at 50% 50%, black 50%, transparent 95%)',
-                WebkitMaskImage: 'radial-gradient(ellipse 90% 90% at 50% 50%, black 50%, transparent 95%)',
+                maskImage: 'radial-gradient(ellipse 95% 95% at 50% 50%, black 60%, transparent 100%)',
+                WebkitMaskImage: 'radial-gradient(ellipse 95% 95% at 50% 50%, black 60%, transparent 100%)',
               }}
             />
           </>

@@ -242,20 +242,34 @@ const Research = () => {
   };
 
   return (
-    <div className="flex h-full -m-6 relative overflow-hidden" style={{ color: 'var(--text-primary)', borderTop: '1px solid rgba(239,35,60,0.1)' }}>
+    <div
+      className="flex h-full -m-6 relative overflow-hidden"
+      style={{
+        color: 'var(--text-primary)',
+        borderTop: '1px solid rgba(239,35,60,0.15)',
+        background: isDark
+          ? 'radial-gradient(ellipse 130% 110% at 50% 0%, #4a0a14 0%, #2f060e 35%, #200409 65%, #140206 100%)'
+          : 'linear-gradient(165deg, #fff1f2 0%, #fff5f5 40%, #ffffff 75%, #fef2f2 100%)',
+      }}
+    >
 
-      {/* ── Background layer (cohesive atmospheric gradient + ambient glows) ── */}
+      {/* ── Background layer (fully gradient red + ambient crimson glow) ── */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         {isDark ? (
           <>
-            <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at 50% 0%, #1e0609 0%, #120406 35%, #0a0a0d 70%, #030304 100%)' }} />
-            <div className="absolute top-1/4 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[650px] bg-red-600/[0.07] rounded-full blur-[140px]" />
-            <div className="absolute bottom-10 right-1/4 w-[500px] h-[500px] bg-red-600/[0.04] rounded-full blur-[130px]" />
             <div
-              className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.018)1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.018)1px,transparent_1px)] bg-[size:48px_48px]"
+              className="absolute inset-0"
               style={{
-                maskImage: 'radial-gradient(ellipse 90% 90% at 50% 50%, black 50%, transparent 95%)',
-                WebkitMaskImage: 'radial-gradient(ellipse 90% 90% at 50% 50%, black 50%, transparent 95%)',
+                background: 'linear-gradient(175deg, rgba(74,10,20,0.95) 0%, rgba(47,6,14,0.95) 35%, rgba(32,4,9,0.98) 70%, rgba(20,2,6,1) 100%)',
+              }}
+            />
+            <div className="absolute top-1/4 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-red-600/[0.14] rounded-full blur-[160px]" />
+            <div className="absolute bottom-10 right-1/4 w-[600px] h-[600px] bg-red-700/[0.09] rounded-full blur-[150px]" />
+            <div
+              className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.025)1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)1px,transparent_1px)] bg-[size:48px_48px]"
+              style={{
+                maskImage: 'radial-gradient(ellipse 95% 95% at 50% 50%, black 60%, transparent 100%)',
+                WebkitMaskImage: 'radial-gradient(ellipse 95% 95% at 50% 50%, black 60%, transparent 100%)',
               }}
             />
           </>
