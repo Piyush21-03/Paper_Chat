@@ -22,7 +22,13 @@ const Shell = () => {
   ];
 
   return (
-    <div className="flex h-screen overflow-hidden relative" style={{ background: 'var(--bg-void)', color: 'var(--text-primary)' }}>
+    <div
+      className="flex h-screen overflow-hidden relative"
+      style={{
+        background: isDark ? '#140206' : '#fff1f2',
+        color: 'var(--text-primary)',
+      }}
+    >
 
       {/* ── Star field ── */}
       <div className="stars-layer-1" aria-hidden="true" />
@@ -157,9 +163,65 @@ const Shell = () => {
       </aside>
 
       {/* ── Main ── */}
-      <main className="flex-1 flex flex-col min-w-0 overflow-hidden relative z-10">
+      <main
+        className="flex-1 flex flex-col min-w-0 overflow-hidden relative z-10"
+        style={{
+          background: isDark
+            ? 'radial-gradient(ellipse 130% 110% at 50% 0%, #4a0a14 0%, #2f060e 35%, #200409 65%, #140206 100%)'
+            : 'linear-gradient(165deg, #fff1f2 0%, #fff5f5 40%, #ffffff 75%, #fef2f2 100%)',
+        }}
+      >
+        {/* Full-canvas Ambient Glow & Grid Layer (Covers 100% of Viewport) */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden z-0" aria-hidden="true">
+          {isDark ? (
+            <>
+              {/* Rich full-spectrum dark red gradient */}
+              <div
+                className="absolute inset-0"
+                style={{
+                  background: 'linear-gradient(175deg, rgba(74,10,20,0.95) 0%, rgba(47,6,14,0.95) 35%, rgba(32,4,9,0.98) 70%, rgba(20,2,6,1) 100%)',
+                }}
+              />
+              
+              {/* Star field layers */}
+              <div className="stars-layer-1 opacity-60" />
+              <div className="stars-layer-2 opacity-60" />
+
+              {/* Radiant core red ambient glow — top */}
+              <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-[750px] h-[750px] bg-red-600/[0.16] rounded-full blur-[160px]" />
+              
+              {/* Mid-canvas ambient crimson diffusion */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[650px] bg-red-600/[0.10] rounded-full blur-[170px]" />
+              
+              {/* Lower-canvas warm garnet glow */}
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-red-700/[0.08] rounded-full blur-[160px]" />
+
+              {/* Subtle grid pattern smoothly covering full viewport */}
+              <div
+                className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:48px_48px]"
+                style={{
+                  maskImage: 'radial-gradient(ellipse 95% 95% at 50% 50%, black 60%, transparent 100%)',
+                  WebkitMaskImage: 'radial-gradient(ellipse 95% 95% at 50% 50%, black 60%, transparent 100%)',
+                }}
+              />
+            </>
+          ) : (
+            <>
+              <div className="absolute inset-0 bg-gradient-to-b from-red-50/60 via-red-50/20 to-white" />
+              <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-red-500/10 rounded-full blur-[120px]" />
+              <div
+                className="absolute inset-0 bg-[linear-gradient(rgba(239,35,60,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(239,35,60,0.03)_1px,transparent_1px)] bg-[size:48px_48px]"
+                style={{
+                  maskImage: 'radial-gradient(ellipse 95% 95% at 50% 50%, black 60%, transparent 100%)',
+                  WebkitMaskImage: 'radial-gradient(ellipse 95% 95% at 50% 50%, black 60%, transparent 100%)',
+                }}
+              />
+            </>
+          )}
+        </div>
+
         <header
-          className="md:hidden flex items-center h-14 px-4"
+          className="md:hidden flex items-center h-14 px-4 relative z-10"
           style={{ background: 'var(--sidebar-bg)', borderBottom: '1px solid var(--sidebar-border)' }}
         >
           <button
@@ -175,10 +237,8 @@ const Shell = () => {
           </div>
         </header>
 
-        <div className="flex-1 overflow-auto" style={{ background: 'transparent' }}>
-          <div className="p-6">
-            <Outlet />
-          </div>
+        <div className="flex-1 overflow-auto flex flex-col min-h-0 relative z-10" style={{ background: 'transparent' }}>
+          <Outlet />
         </div>
       </main>
     </div>

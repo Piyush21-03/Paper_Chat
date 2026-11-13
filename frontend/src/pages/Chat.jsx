@@ -302,51 +302,12 @@ const Chat = () => {
 
   return (
     <div
-      className="flex h-[calc(100vh-4rem)] -m-6 relative overflow-hidden"
+      className="flex flex-1 h-full min-h-0 relative overflow-hidden"
       style={{
         borderTop: '1px solid rgba(239,35,60,0.15)',
-        background: isDark
-          ? 'radial-gradient(ellipse 130% 110% at 50% 0%, #4a0a14 0%, #2f060e 35%, #200409 65%, #140206 100%)'
-          : 'linear-gradient(165deg, #fff1f2 0%, #fff5f5 40%, #ffffff 75%, #fef2f2 100%)',
+        background: 'transparent',
       }}
     >
-      {/* ── Background layer (fully gradient red + ambient crimson glow) ── */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        {isDark ? (
-          <>
-            <div
-              className="absolute inset-0"
-              style={{
-                background: 'linear-gradient(175deg, rgba(74,10,20,0.95) 0%, rgba(47,6,14,0.95) 35%, rgba(32,4,9,0.98) 70%, rgba(20,2,6,1) 100%)',
-              }}
-            />
-            {/* Ambient core glow */}
-            <div className="absolute top-1/4 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-red-600/[0.14] rounded-full blur-[160px]" />
-            {/* Ambient secondary glow */}
-            <div className="absolute bottom-10 right-1/4 w-[600px] h-[600px] bg-red-700/[0.09] rounded-full blur-[150px]" />
-            {/* Subtle grid */}
-            <div
-              className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.025)1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)1px,transparent_1px)] bg-[size:48px_48px]"
-              style={{
-                maskImage: 'radial-gradient(ellipse 95% 95% at 50% 50%, black 60%, transparent 100%)',
-                WebkitMaskImage: 'radial-gradient(ellipse 95% 95% at 50% 50%, black 60%, transparent 100%)',
-              }}
-            />
-          </>
-        ) : (
-          <>
-            <div style={{
-              position: 'absolute', inset: 0,
-              background: 'linear-gradient(160deg, #fff5f5 0%, #ffffff 50%, #f8fafc 100%)',
-            }} />
-            <div style={{
-              position: 'absolute', top: '-10%', left: '20%', width: '60%', height: '50%',
-              background: 'radial-gradient(ellipse, rgba(239,35,60,0.06) 0%, transparent 70%)',
-              filter: 'blur(50px)',
-            }} />
-          </>
-        )}
-      </div>
 
       {/* ── Sidebar: Conversations ── */}
       <div
