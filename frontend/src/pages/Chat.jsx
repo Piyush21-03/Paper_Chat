@@ -21,6 +21,7 @@ const Chat = () => {
   const [question, setQuestion] = useState('');
   const [isStreaming, setIsStreaming] = useState(false);
   const [activeDocId, setActiveDocId] = useState(initDocId || null);
+  const [showPdf, setShowPdf] = useState(true);
 
   const messagesEndRef = useRef(null);
   const abortControllerRef = useRef(null);
@@ -98,6 +99,7 @@ const Chat = () => {
 
   const handleSourceClick = (docId, pageNum) => {
     if (docId) setActiveDocId(docId);
+    setShowPdf(true);
     if (pageNum) {
       setTimeout(() => {
         pdfRef.current?.goToPage(pageNum);
@@ -126,6 +128,7 @@ const Chat = () => {
       e.preventDefault();
       const p = parseInt(badge.getAttribute('data-page'), 10);
       if (!isNaN(p)) {
+        setShowPdf(true);
         if (!activeDocId) {
           if (currentConv?.document_ids?.length > 0) {
             setActiveDocId(currentConv.document_ids[0]);
@@ -386,42 +389,57 @@ const Chat = () => {
         </div>
       </div>
 
-      {/* ── Center: Interactive Chat Panel ── */}
+      {/* ── Center: Interactive Chat Panel (Spacious & Prominent) ── */}
       <div className="flex-1 flex flex-col min-w-0 relative z-10">
         
         {/* Header */}
         <div
-          className="h-14 flex items-center justify-between px-5 shrink-0"
+          className="h-14 flex items-center justify-between px-6 shrink-0"
           style={{
             borderBottom: '1px solid rgba(239,35,60,0.12)',
             ...glassSurface,
           }}
         >
           <div className="flex items-center gap-2 overflow-hidden">
-            <h2 className="text-sm font-semibold truncate font-manrope" style={{ color: 'var(--text-primary)' }}>
+            <h2 className="text-base font-semibold truncate font-manrope" style={{ color: 'var(--text-primary)' }}>
               {currentConv ? currentConv.title : 'Scholarly Reader & QA'}
             </h2>
           </div>
-          {activeDocId && (
-            <div
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold"
+          <div className="flex items-center gap-3">
+            {activeDocId && (
+              <div
+                className="flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold"
+                style={{
+                  background: 'rgba(239,35,60,0.1)',
+                  border: '1px solid rgba(239,35,60,0.25)',
+                  color: 'var(--accent-red)',
+                  boxShadow: '0 0 10px rgba(239,35,60,0.1)',
+                }}
+              >
+                <FileText size={12} />
+                <span>Context Linked</span>
+              </div>
+            )}
+            <button
+              onClick={() => setShowPdf(prev => !prev)}
+              className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold cursor-pointer transition-all"
               style={{
-                background: 'rgba(239,35,60,0.1)',
-                border: '1px solid rgba(239,35,60,0.25)',
-                color: 'var(--accent-red)',
-                boxShadow: '0 0 10px rgba(239,35,60,0.1)',
+                background: showPdf ? 'rgba(239,35,60,0.12)' : isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)',
+                border: '1px solid ' + (showPdf ? 'rgba(239,35,60,0.3)' : 'rgba(255,255,255,0.1)'),
+                color: showPdf ? 'var(--accent-red)' : 'var(--text-secondary)',
               }}
+              title={showPdf ? 'Expand Chat to Full Width' : 'Show Split-Screen PDF Viewer'}
             >
-              <FileText size={12} />
-              <span>Context Linked</span>
-            </div>
-          )}
+              <BookOpen size={13} />
+              <span>{showPdf ? 'Wide Chat View' : 'Show PDF Reader'}</span>
+            </button>
+          </div>
         </div>
 
         {/* Message Feed */}
         <div
           onClick={handleMessageContainerClick}
-          className="flex-1 overflow-y-auto p-5 space-y-5"
+          className="flex-1 overflow-y-auto p-6 space-y-6"
           style={{ background: 'transparent' }}
         >
           {messages.length === 0 ? (
@@ -446,8 +464,8 @@ const Chat = () => {
                   <BookOpen size={24} strokeWidth={2} />
                 </div>
               </div>
-              <h3 className="text-lg font-bold font-manrope" style={{ color: 'var(--text-primary)' }}>Document Inquiry</h3>
-              <p className="text-xs mt-2 max-w-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+              <h3 className="text-xl font-bold font-manrope" style={{ color: 'var(--text-primary)' }}>Document Inquiry</h3>
+              <p className="text-sm mt-2 max-w-md leading-relaxed" style={{ color: 'var(--text-muted)' }}>
                 Pose specific technical questions or request syntheses. Citations will link directly to exact document pages.
               </p>
             </div>
@@ -456,11 +474,11 @@ const Chat = () => {
               <div key={msg.id || i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 {msg.role === 'user' ? (
                   <div
-                    className="max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed"
+                    className="max-w-[88%] rounded-2xl px-5 py-3.5 text-[15px] leading-relaxed"
                     style={{
-                      background: isDark ? 'rgba(239,35,60,0.1)' : 'rgba(239,35,60,0.06)',
+                      background: isDark ? 'rgba(239,35,60,0.12)' : 'rgba(239,35,60,0.06)',
                       color: 'var(--text-primary)',
-                      border: '1px solid rgba(239,35,60,0.2)',
+                      border: '1px solid rgba(239,35,60,0.22)',
                       backdropFilter: 'blur(12px)',
                       WebkitBackdropFilter: 'blur(12px)',
                     }}
@@ -468,17 +486,17 @@ const Chat = () => {
                     <div className="whitespace-pre-wrap">{msg.content}</div>
                   </div>
                 ) : (
-                  /* Assistant Card — glassmorphic */
+                  /* Assistant Card — expanded glassmorphic */
                   <div
-                    className="max-w-[92%] rounded-2xl px-5 py-4"
+                    className="max-w-[96%] rounded-2xl px-6 py-5 text-[15px]"
                     style={{
-                      background: isDark ? 'rgba(15,15,18,0.70)' : 'rgba(255,255,255,0.80)',
-                      border: isDark ? '1px solid rgba(255,255,255,0.07)' : '1px solid rgba(0,0,0,0.08)',
+                      background: isDark ? 'rgba(15,15,18,0.72)' : 'rgba(255,255,255,0.82)',
+                      border: isDark ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(0,0,0,0.08)',
                       backdropFilter: 'blur(20px)',
                       WebkitBackdropFilter: 'blur(20px)',
                       boxShadow: isDark
-                        ? '0 4px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05)'
-                        : '0 4px 24px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8)',
+                        ? '0 6px 28px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.05)'
+                        : '0 6px 28px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8)',
                     }}
                   >
                     <div
@@ -592,18 +610,20 @@ const Chat = () => {
         </div>
       </div>
 
-      {/* ── Right: PDF Viewer ── */}
-      <div
-        className="w-1/2 hidden lg:block relative z-10"
-        style={{
-          borderLeft: '1px solid rgba(239,35,60,0.12)',
-          background: isDark ? 'rgba(5,5,8,0.85)' : 'rgba(255,255,255,0.85)',
-          backdropFilter: 'blur(10px)',
-          WebkitBackdropFilter: 'blur(10px)',
-        }}
-      >
-        <PdfViewer ref={pdfRef} documentId={activeDocId} />
-      </div>
+      {/* ── Right: PDF Viewer (Condensed width so Chat panel is spacious) ── */}
+      {showPdf && (
+        <div
+          className="w-[42%] xl:w-[38%] hidden lg:block relative z-10 shrink-0 transition-all duration-300"
+          style={{
+            borderLeft: '1px solid rgba(239,35,60,0.12)',
+            background: isDark ? 'rgba(5,5,8,0.85)' : 'rgba(255,255,255,0.85)',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+          }}
+        >
+          <PdfViewer ref={pdfRef} documentId={activeDocId} />
+        </div>
+      )}
     </div>
   );
 };
