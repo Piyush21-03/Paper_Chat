@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import api from '../utils/api';
 
 const AuthContext = createContext();
@@ -6,24 +6,20 @@ const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Check if we have a token and user cached
-    const token = localStorage.getItem('paperchat-token');
-    const cachedUser = localStorage.getItem('paperchat-user');
-
-    if (token && cachedUser) {
-      try {
-        setUser(JSON.parse(cachedUser));
-      } catch (e) {
-        console.error("Failed to parse cached user");
-        logout();
+  const [user, setUser] = useState(() => {
+    try {
+      const token = localStorage.getItem('paperchat-token');
+      const cachedUser = localStorage.getItem('paperchat-user');
+      if (token && cachedUser) {
+        return JSON.parse(cachedUser);
       }
+    } catch {
+      localStorage.removeItem('paperchat-token');
+      localStorage.removeItem('paperchat-user');
     }
-    setLoading(false);
-  }, []);
+    return null;
+  });
+  const [loading] = useState(false);
 
   const login = async (email, password) => {
     const response = await api.post('/api/auth/login', { email, password });

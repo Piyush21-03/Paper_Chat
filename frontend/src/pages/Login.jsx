@@ -12,7 +12,7 @@ const Login = () => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { login, user } = useAuth();
-  const { theme, toggleTheme, isDark } = useTheme();
+  const { toggleTheme, isDark } = useTheme();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 

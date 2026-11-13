@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import api from '../utils/api';
 import PdfViewer from '../components/PdfViewer';
-import { MessageSquare, Plus, Send, StopCircle, Trash2, ArrowLeft, Loader2, BookOpen, FileText, ChevronRight } from 'lucide-react';
+import { MessageSquare, Plus, Send, StopCircle, Trash2, BookOpen, FileText } from 'lucide-react';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import toast from 'react-hot-toast';
@@ -11,7 +11,6 @@ marked.setOptions({ breaks: true });
 
 const Chat = () => {
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
   const initDocId = searchParams.get('doc');
 
   const [conversations, setConversations] = useState([]);
@@ -25,16 +24,6 @@ const Chat = () => {
   const abortControllerRef = useRef(null);
   const pdfRef = useRef(null);
 
-  useEffect(() => {
-    loadConversations();
-  }, []);
-
-  useEffect(() => {
-    if (initDocId && !currentConv) {
-      setActiveDocId(initDocId);
-    }
-  }, [initDocId, currentConv]);
-
   const loadConversations = async () => {
     try {
       const response = await api.get('/api/conversations');
@@ -45,6 +34,16 @@ const Chat = () => {
       console.error(err);
     }
   };
+
+  useEffect(() => {
+    loadConversations();
+  }, []);
+
+  useEffect(() => {
+    if (initDocId && !currentConv) {
+      setActiveDocId(initDocId);
+    }
+  }, [initDocId, currentConv]);
 
   const loadConversation = async (id) => {
     try {

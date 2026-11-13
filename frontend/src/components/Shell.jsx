@@ -3,11 +3,10 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { FileText, FlaskConical, BarChart2, Settings, LogOut, Menu, X, Sun, Moon } from 'lucide-react';
-import toast from 'react-hot-toast';
 
 const Shell = () => {
   const { user, logout } = useAuth();
-  const { theme, toggleTheme, isDark } = useTheme();
+  const { toggleTheme, isDark } = useTheme();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
-import { Save, Settings2, Sliders, CheckCircle, Info } from 'lucide-react';
+import { Save, Settings2, Sliders, Info } from 'lucide-react';
 
 const Settings = () => {
   const [settings, setSettings] = useState({
@@ -15,21 +15,21 @@ const Settings = () => {
   const [saving, setSaving] = useState(false);
   const [maxContext, setMaxContext] = useState(0);
 
-  useEffect(() => {
-    loadSettings();
-  }, []);
-
   const loadSettings = async () => {
     try {
       const response = await api.get('/api/settings');
       setSettings(response.data);
       setMaxContext(response.data.max_context_chars || 0);
-    } catch (err) {
+    } catch {
       toast.error('Failed to load settings');
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    loadSettings();
+  }, []);
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -38,7 +38,7 @@ const Settings = () => {
       await api.put('/api/settings', settings);
       toast.success('Hyperparameters updated successfully');
       await loadSettings();
-    } catch (err) {
+    } catch {
       toast.error('Failed to save settings');
     } finally {
       setSaving(false);
