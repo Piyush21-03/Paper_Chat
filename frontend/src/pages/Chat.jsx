@@ -521,11 +521,11 @@ const Chat = () => {
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Input Bar — glassmorphic */}
+        {/* Input Bar — enlarged and spacious */}
         <div
-          className="p-4 shrink-0"
+          className="p-5 shrink-0"
           style={{
-            borderTop: '1px solid rgba(239,35,60,0.12)',
+            borderTop: '1px solid rgba(239,35,60,0.15)',
             ...glassSurface,
           }}
         >
@@ -540,53 +540,54 @@ const Chat = () => {
                 }
               }}
               placeholder="Query paper findings, methodology, formulas, or conclusions..."
-              className="w-full pl-4 pr-14 py-3 rounded-xl text-sm focus:outline-none transition-all resize-none leading-relaxed"
+              className="w-full pl-5 pr-16 py-3.5 rounded-2xl text-[15px] focus:outline-none transition-all resize-none leading-relaxed font-sans shadow-inner"
               style={{
-                minHeight: '52px',
-                maxHeight: '180px',
-                background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)',
+                minHeight: '82px',
+                maxHeight: '220px',
+                background: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
                 color: 'var(--text-primary)',
-                border: '1px solid rgba(239,35,60,0.15)',
-                backdropFilter: 'blur(8px)',
-                WebkitBackdropFilter: 'blur(8px)',
+                border: '1px solid rgba(239,35,60,0.20)',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
               }}
               onFocus={(e) => {
-                e.target.style.borderColor = 'rgba(239,35,60,0.5)';
-                e.target.style.boxShadow = '0 0 0 3px rgba(239,35,60,0.1)';
+                e.target.style.borderColor = 'rgba(239,35,60,0.6)';
+                e.target.style.boxShadow = '0 0 0 3px rgba(239,35,60,0.15), 0 0 20px rgba(239,35,60,0.1)';
               }}
               onBlur={(e) => {
-                e.target.style.borderColor = 'rgba(239,35,60,0.15)';
+                e.target.style.borderColor = 'rgba(239,35,60,0.20)';
                 e.target.style.boxShadow = 'none';
               }}
-              rows={1}
+              rows={2}
             />
             {isStreaming ? (
               <button
                 type="button"
                 onClick={handleStop}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-2 rounded-lg transition-colors"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 p-2.5 rounded-xl transition-all"
                 style={{ color: 'var(--accent-red)' }}
                 title="Halt Generation"
               >
-                <StopCircle size={18} />
+                <StopCircle size={22} />
               </button>
             ) : (
               <button
                 type="submit"
                 disabled={!question.trim()}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-2 text-white rounded-lg disabled:opacity-30 transition-all cursor-pointer"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 p-2.5 text-white rounded-xl disabled:opacity-30 transition-all cursor-pointer shadow-md hover:scale-105 active:scale-95"
                 style={{
                   background: 'linear-gradient(135deg, #ef233c, #d90429)',
-                  boxShadow: question.trim() ? '0 2px 10px rgba(239,35,60,0.4)' : 'none',
+                  boxShadow: question.trim() ? '0 4px 15px rgba(239,35,60,0.45)' : 'none',
                 }}
                 title="Send Inquiry"
               >
-                <Send size={16} />
+                <Send size={18} />
               </button>
             )}
           </form>
-          <div className="text-[11px] text-center mt-2 font-medium" style={{ color: 'var(--text-muted)' }}>
-            Responses extract verified passages with grounded citations.
+          <div className="text-[12px] text-center mt-2 font-medium flex items-center justify-center gap-2" style={{ color: 'var(--text-muted)' }}>
+            <span>Responses extract verified passages with grounded citations.</span>
+            <span className="text-[10px] font-mono opacity-70">↵ Enter to send</span>
           </div>
         </div>
       </div>
