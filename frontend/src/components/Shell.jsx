@@ -25,23 +25,10 @@ const Shell = () => {
     <div
       className="flex h-screen overflow-hidden relative"
       style={{
-        background: isDark ? '#050507' : '#f8fafc',
+        background: 'transparent',
         color: 'var(--text-primary)',
       }}
     >
-
-      {/* ── Star field ── */}
-      <div className="stars-layer-1" aria-hidden="true" />
-      <div className="stars-layer-2" aria-hidden="true" />
-
-      {/* ── Red ambient glow ── */}
-      <div
-        className="pointer-events-none fixed inset-0 z-0"
-        style={{
-          background: 'radial-gradient(ellipse 60% 40% at 20% 50%, rgba(239,35,60,0.05) 0%, transparent 70%)',
-        }}
-        aria-hidden="true"
-      />
 
       {/* ── Mobile overlay ── */}
       {sidebarOpen && (
@@ -162,53 +149,50 @@ const Shell = () => {
         </div>
       </aside>
 
-      {/* ── Main ── */}
-      <main
-        className="flex-1 flex flex-col min-w-0 overflow-hidden relative z-10"
+      {/* ── Full-screen background layer (fixed, behind everything) ── */}
+      <div
+        className="fixed inset-0 z-0 pointer-events-none"
         style={{
           background: isDark
             ? 'linear-gradient(180deg, #040406 0%, #070305 35%, #0f0306 70%, #1a0408 100%)'
             : 'linear-gradient(180deg, #ffffff 0%, #fafafa 40%, #fff5f5 75%, #fef2f2 100%)',
         }}
+        aria-hidden="true"
       >
-        {/* Full-canvas Ambient Glow & Grid Layer: Sleek black with subtle glowing red accents */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden z-0" aria-hidden="true">
-          {isDark ? (
-            <>
-              {/* Star field layers */}
-              <div className="stars-layer-1 opacity-70" />
-              <div className="stars-layer-2 opacity-70" />
+        {isDark ? (
+          <>
+            <div className="stars-layer-1 opacity-70" />
+            <div className="stars-layer-2 opacity-70" />
+            <div className="absolute bottom-1/4 left-1/2 -translate-x-1/2 w-[850px] h-[550px] bg-red-600/[0.08] rounded-full blur-[170px]" />
+            <div className="absolute -bottom-24 left-1/3 -translate-x-1/2 w-[750px] h-[500px] bg-red-700/[0.07] rounded-full blur-[160px]" />
+            <div className="absolute top-0 right-1/4 w-[600px] h-[400px] bg-red-600/[0.025] rounded-full blur-[150px]" />
+            <div
+              className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.018)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.018)_1px,transparent_1px)] bg-[size:48px_48px]"
+              style={{
+                maskImage: 'radial-gradient(ellipse 95% 95% at 50% 50%, black 50%, transparent 95%)',
+                WebkitMaskImage: 'radial-gradient(ellipse 95% 95% at 50% 50%, black 50%, transparent 95%)',
+              }}
+            />
+          </>
+        ) : (
+          <>
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-red-500/5 rounded-full blur-[140px]" />
+            <div
+              className="absolute inset-0 bg-[linear-gradient(rgba(239,35,60,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(239,35,60,0.02)_1px,transparent_1px)] bg-[size:48px_48px]"
+              style={{
+                maskImage: 'radial-gradient(ellipse 95% 95% at 50% 50%, black 50%, transparent 95%)',
+                WebkitMaskImage: 'radial-gradient(ellipse 95% 95% at 50% 50%, black 50%, transparent 95%)',
+              }}
+            />
+          </>
+        )}
+      </div>
 
-              {/* Lower ambient crimson glow — subtle & atmospheric */}
-              <div className="absolute bottom-1/4 left-1/2 -translate-x-1/2 w-[850px] h-[550px] bg-red-600/[0.08] rounded-full blur-[170px]" />
-              <div className="absolute -bottom-24 left-1/3 -translate-x-1/2 w-[750px] h-[500px] bg-red-700/[0.07] rounded-full blur-[160px]" />
-              
-              {/* Very faint upper ambient accent */}
-              <div className="absolute top-0 right-1/4 w-[600px] h-[400px] bg-red-600/[0.025] rounded-full blur-[150px]" />
-
-              {/* Subtle grid pattern smoothly covering full viewport */}
-              <div
-                className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.018)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.018)_1px,transparent_1px)] bg-[size:48px_48px]"
-                style={{
-                  maskImage: 'radial-gradient(ellipse 95% 95% at 50% 50%, black 50%, transparent 95%)',
-                  WebkitMaskImage: 'radial-gradient(ellipse 95% 95% at 50% 50%, black 50%, transparent 95%)',
-                }}
-              />
-            </>
-          ) : (
-            <>
-              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-red-500/5 rounded-full blur-[140px]" />
-              <div
-                className="absolute inset-0 bg-[linear-gradient(rgba(239,35,60,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(239,35,60,0.02)_1px,transparent_1px)] bg-[size:48px_48px]"
-                style={{
-                  maskImage: 'radial-gradient(ellipse 95% 95% at 50% 50%, black 50%, transparent 95%)',
-                  WebkitMaskImage: 'radial-gradient(ellipse 95% 95% at 50% 50%, black 50%, transparent 95%)',
-                }}
-              />
-            </>
-          )}
-        </div>
-
+      {/* ── Main ── */}
+      <main
+        className="flex-1 flex flex-col min-w-0 overflow-hidden relative z-10"
+        style={{ background: 'transparent' }}
+      >
         <header
           className="md:hidden flex items-center h-14 px-4 relative z-10"
           style={{ background: 'var(--sidebar-bg)', borderBottom: '1px solid var(--sidebar-border)' }}
